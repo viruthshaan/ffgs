@@ -66,8 +66,7 @@
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <!-- TODO: replace with the paper's teaser figure -->
-      <div class="placeholder">Teaser figure (Fig. 1 of the paper)</div>
+      <img src="static/images/method.png" alt="Pipeline: frozen VGGT, three training-free pose operations, frozen TokenGS">
       <p class="caption has-text-centered">
         A frozen VGGT pose estimator and a frozen TokenGS reconstructor, connected with three deterministic
         pose fixes. No training, no per-scene optimisation, no COLMAP at test time.
@@ -105,8 +104,8 @@
   <div class="container is-max-desktop">
     <h2 class="title is-3 has-text-centered">Method</h2>
     <div class="figure">
-      <!-- TODO: replace with the pipeline figure (Fig. 2) -->
-      <div class="placeholder">Pipeline figure (Fig. 2 of the paper)</div>
+      <img src="static/images/pose_error_decomposition.png" alt="VGGT vs COLMAP pose error: rotation error is small, translation scale is off by about 7x">
+      <p class="caption has-text-centered">Why pose refinement is not the fix: after the convention conversion, VGGT's rotation error is small (median 1.60° on DL3DV, 1.32° on MipNeRF360), while its translation scale is off by a large, dataset-consistent factor (median 7.0 and 5.9).</p>
     </div>
     <div class="content has-text-justified">
       <p>The whole method is pose post-processing between the two frozen models:</p>
@@ -141,8 +140,8 @@
       </tbody>
     </table>
     <div class="figure">
-      <!-- TODO: replace with qualitative comparison figure (Fig. 3) -->
-      <div class="placeholder">Qualitative comparison (Fig. 3 of the paper)</div>
+      <img src="static/images/qualitative.png" alt="Qualitative comparison on DL3DV: naive, intermediate fixes, ours, COLMAP, ground truth">
+      <p class="caption has-text-centered">DL3DV novel views. Naive integration collapses; each fix recovers detail; ours is close to the COLMAP reference. Column labels follow the paper's Table 2.</p>
     </div>
   </div>
 </section>
