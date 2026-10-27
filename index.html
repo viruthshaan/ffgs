@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Frame-Consistent Feed-Forward 3D Gaussian Splatting from Sparse Unposed Images. A frozen VGGT pose estimator driving a frozen TokenGS reconstructor, training-free.">
+  <meta name="keywords" content="3D Gaussian Splatting, feed-forward, VGGT, TokenGS, pose-free, novel view synthesis">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Frame-Consistent Feed-Forward 3DGS</title>
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.4/css/academicons.min.css">
+  <style>
+    body { font-family: 'Noto Sans', sans-serif; }
+    .publication-title { font-family: 'Google Sans', sans-serif; }
+    .publication-authors { font-family: 'Google Sans', sans-serif; }
+    .publication-authors a { color: hsl(204, 86%, 53%) !important; }
+    .author-block { display: inline-block; }
+    .publication-links { margin-top: 1rem; }
+    .link-block { display: inline-block; margin: 0.25rem; }
+    .link-block .button { border-radius: 9999px; }
+    .teaser img, .figure img { border-radius: 6px; }
+    .figure { margin: 1.5rem 0; }
+    .caption { font-size: 0.9rem; color: #555; margin-top: 0.5rem; }
+    .placeholder { background: #f1f1f1; border: 1px dashed #bbb; border-radius: 6px; color: #777;
+                   display: flex; align-items: center; justify-content: center; min-height: 220px; font-size: 0.95rem; }
+    table.results { margin: 0 auto; }
+    table.results td, table.results th { padding: 0.4rem 0.9rem; }
+    table.results tr.ours { background: #eef6ff; font-weight: 600; }
+    pre code { font-size: 0.85rem; }
+    .footer { padding: 2rem 1rem; }
+  </style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-2 publication-title">Frame-Consistent Feed-Forward 3D Gaussian Splatting from Sparse Unposed Images</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><a href="https://github.com/viruthshaan">Viruthshaan Vinasirajan</a>,</span>
+            <span class="author-block">Ranga Rodrigo</span>
+          </div>
+          <div class="publication-links">
+            <span class="link-block">
+              <a href="https://arxiv.org/pdf/2610.23039" class="button is-dark">
+                <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span></a>
+            </span>
+            <span class="link-block">
+              <a href="https://arxiv.org/abs/2610.23039" class="button is-dark">
+                <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span></a>
+            </span>
+            <span class="link-block">
+              <a href="https://github.com/viruthshaan/frame-consistent-ffgs" class="button is-dark">
+                <span class="icon"><i class="fab fa-github"></i></span><span>Code (coming soon)</span></a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <!-- TODO: replace with the paper's teaser figure -->
+      <div class="placeholder">Teaser figure (Fig. 1 of the paper)</div>
+      <p class="caption has-text-centered">
+        A frozen VGGT pose estimator and a frozen TokenGS reconstructor, connected with three deterministic
+        pose fixes. No training, no per-scene optimisation, no COLMAP at test time.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>Feed-forward Gaussian models have made novel view synthesis almost instantaneous. Using two separately
+            trained models, one for pose estimation and one for reconstruction, is attractive because each can
+            specialise in its own objective. A natural instantiation pairs a frozen pose estimator, VGGT, with a frozen
+            reconstruction backbone, TokenGS. Prior two-stage work attributes the resulting quality degradation to noisy
+            pose estimates and introduces learned refinement. We show that this is not the primary source of the
+            problem.</p>
+          <p>Through per-camera analysis across 107 scenes from DL3DV and MipNeRF360, using COLMAP poses as the
+            reference, we find that the rotation error after alignment is small, whereas the translation scale is offset
+            by a large, dataset-consistent factor. Controlled ablations on the DL3DV benchmark show that the obstacles
+            are integration failures rather than pose error: a coordinate-frame inconsistency between context and target
+            views, a camera-convention mismatch, and a translation-scale mismatch, all of which can be corrected
+            deterministically. With these fixes a frozen VGGT driving a frozen TokenGS reaches 22.47 PSNR, within
+            0.5 dB of the COLMAP reference, with no additional training.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Method</h2>
+    <div class="figure">
+      <!-- TODO: replace with the pipeline figure (Fig. 2) -->
+      <div class="placeholder">Pipeline figure (Fig. 2 of the paper)</div>
+    </div>
+    <div class="content has-text-justified">
+      <p>The whole method is pose post-processing between the two frozen models:</p>
+      <ol>
+        <li><strong>Frame-consistent inference.</strong> Run VGGT once over context and target views together, so every
+          camera lands in one shared frame. Running it on the context views alone and borrowing target poses from
+          elsewhere puts the two sets in unrelated frames.</li>
+        <li><strong>Convention conversion.</strong> VGGT emits OpenCV camera axes; TokenGS was trained on NeRF-style
+          transforms. Flip the y and z columns of every camera-to-world matrix.</li>
+        <li><strong>Translation scale.</strong> VGGT's output is scale-normalised. Multiply translations by a fixed 7.0,
+          the median COLMAP-to-VGGT baseline ratio over 100 DL3DV training scenes, or normalise the first-camera baseline
+          to 1 for a calibration-free variant.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Results</h2>
+    <p class="has-text-centered">DL3DV 4-view benchmark, 139 scenes, frozen TokenGS <code>dl3dv_4v</code>. Each row changes one thing.</p>
+    <br>
+    <table class="table results is-striped">
+      <thead><tr><th>Configuration</th><th>PSNR ↑</th></tr></thead>
+      <tbody>
+        <tr><td>Naive: VGGT on the 4 context views, COLMAP target poses</td><td>13.67</td></tr>
+        <tr><td>Joint VGGT over context + target views</td><td>15.45</td></tr>
+        <tr><td>+ convention conversion</td><td>20.39</td></tr>
+        <tr><td>+ scale: first-camera baseline = 1</td><td>22.25</td></tr>
+        <tr class="ours"><td>+ scale: fixed ×7 (ours)</td><td>22.47</td></tr>
+        <tr><td>COLMAP poses (reference)</td><td>22.99</td></tr>
+      </tbody>
+    </table>
+    <div class="figure">
+      <!-- TODO: replace with qualitative comparison figure (Fig. 3) -->
+      <div class="placeholder">Qualitative comparison (Fig. 3 of the paper)</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{vinasirajan2026frameconsistent,
+  title   = {Frame-Consistent Feed-Forward 3D Gaussian Splatting from Sparse Unposed Images},
+  author  = {Vinasirajan, Viruthshaan and Rodrigo, Ranga},
+  journal = {arXiv preprint arXiv:2610.23039},
+  year    = {2026}
+}</code></pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered is-size-7">
+      <p>Page template adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>, CC BY-SA 4.0.</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
