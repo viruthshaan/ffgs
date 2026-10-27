@@ -146,6 +146,33 @@
   </div>
 </section>
 
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Limitations and open questions</h2>
+    <div class="content has-text-justified">
+      <p>The fixes here are deterministic integration steps, not a new model. What the work contributes is a measurement:
+        for a frozen pose estimator feeding a frozen feed-forward reconstructor in the sparse setting, most of the quality
+        gap to COLMAP comes from how the two are connected, not from pose error. That leaves several questions open.</p>
+      <ul>
+        <li><strong>Scale without COLMAP.</strong> The fixed ×7 is the median COLMAP/VGGT baseline ratio over 100 DL3DV
+          training scenes and will differ on other capture styles. The calibration-free baseline variant is only 0.2 dB
+          lower, but predicting the scale a reconstructor expects, per scene and without any reference poses, remains
+          open for every pose-model and reconstruction-model pairing.</li>
+        <li><strong>Target views and context poses.</strong> The target image is passed through VGGT with the context so
+          all cameras share one frame. Because VGGT uses global attention, the target can influence the context poses.
+          Getting target poses in the context frame without that influence is an open protocol question for pose-free
+          evaluation in general.</li>
+        <li><strong>Beyond one backbone and one benchmark.</strong> End-to-end results use TokenGS on DL3DV 4-view;
+          MipNeRF360 is used only for the pose analysis. Whether the same breakdown holds for other feed-forward
+          reconstructors, more views, and other datasets is untested.</li>
+        <li><strong>Dense-view, per-scene methods.</strong> Two-stage methods that optimise per scene from many views may
+          be more sensitive to the remaining rotation error than a feed-forward model is. Our findings speak to the
+          sparse feed-forward setting only.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
